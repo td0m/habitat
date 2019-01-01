@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/ui/calendar.dart';
+import 'package:habitat/ui/create_habit_dialog.dart';
+import 'package:habitat/ui/habit_list_item.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 void main() => runApp(App());
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Habitat',
-      theme: ThemeData(
-        primaryColor: Colors.white,
-        accentColor: Colors.blue,
-        canvasColor: Colors.white,
+    return ScopedModel<HabitModel>(
+      model: HabitModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Habitat',
+        theme: ThemeData(
+          primaryColor: Colors.lightBlue.shade600,
+          accentColor: Colors.lightBlue.shade600,
+          canvasColor: Color(0xfff5f5f5),
+        ),
+        home: MyHomePage(title: 'Habitat'),
       ),
-      home: MyHomePage(title: 'Habitat'),
     );
   }
 }
@@ -30,61 +37,61 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration(milliseconds: 10), () {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-        ),
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.black26,
-        statusBarIconBrightness: Brightness.light,
-      ),
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CreateHabitDialog(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final habitModel =
+        ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
+
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Color(0xffcccccc),
-              boxShadow: [
-                BoxShadow(color: Colors.black38, spreadRadius: 1, blurRadius: 4)
-              ]),
-          child: Calendar(startingWeekDay: 4, daysInMonth: 28),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 5),
+            ),
+            Column(
+              children: habitModel.habits
+                  .map((h) => HabitListItem(
+                        title: h.title,
+                      ))
+                  .toList(),
+            )
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _showDialog,
         child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        notchMargin: 4,
+        shape: CircularNotchedRectangle(),
+        child: Padding(
+          padding: EdgeInsets.all(4),
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {},
+              ),
+              Text(
+                "Habitat",
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .copyWith(color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

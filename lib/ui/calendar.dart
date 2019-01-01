@@ -42,7 +42,7 @@ class _CalendarState extends State<Calendar> {
     }
     // fill days
     while (i <= widget.daysInMonth) {
-      row.add(RoundCheckbox(placeholder: "$i"));
+      row.add(RoundCheckbox(placeholder: "$i", value: false));
       i++;
       if (wd == 6) {
         rows.add(row);
