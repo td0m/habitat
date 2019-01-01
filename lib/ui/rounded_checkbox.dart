@@ -71,7 +71,7 @@ class _RoundCheckboxState extends State<RoundCheckbox> {
               style: TextStyle(
                   color: value
                       ? Colors.white.withAlpha(0xdd)
-                      : Colors.black.withAlpha(0xaa)),
+                      : Colors.black.withAlpha(0x88)),
             ),
           ),
         ),
