@@ -84,6 +84,7 @@ class _HomePageState extends State<HomePage>
       bottomNavigationBar: BottomAppBar(
         notchMargin: 4,
         shape: CircularNotchedRectangle(),
+        color: Theme.of(context).cardColor,
         child: Padding(
           padding: EdgeInsets.all(4),
           child: Row(
@@ -94,14 +95,10 @@ class _HomePageState extends State<HomePage>
                   IconButton(
                     icon: Icon(Icons.menu),
                     onPressed: () {},
-                    color: Colors.black.withAlpha(0xbb),
                   ),
                   Text(
                     "Habitat",
-                    style: Theme.of(context)
-                        .textTheme
-                        .title
-                        .copyWith(color: Colors.black.withAlpha(0xbb)),
+                    style: Theme.of(context).textTheme.title,
                   ),
                 ],
               ),
@@ -109,7 +106,6 @@ class _HomePageState extends State<HomePage>
                 icon: Icon(Icons.settings),
                 onPressed:
                     open ? () => Navigator.of(context).pop() : _openSettings,
-                color: Colors.black.withAlpha(0xbb),
               )
             ],
           ),

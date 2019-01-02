@@ -41,7 +41,7 @@ class RoundCheckbox extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.transparent,
+            color: value && placeholder != null ? color : Colors.transparent,
             border: Border.all(
                 color: (value)
                     ? color

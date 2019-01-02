@@ -44,6 +44,7 @@ class _HabitListItemState extends State<HabitListItem> {
         borderRadius: BorderRadius.circular(5),
         color: Theme.of(context).cardColor,
         child: InkWell(
+          borderRadius: BorderRadius.circular(5),
           splashColor: Theme.of(context).primaryColorLight,
           onTap: _handleTap,
           child: Container(

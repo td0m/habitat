@@ -31,12 +31,24 @@ class Habit {
     int count = 0;
     DateTime date = DateTime.now();
     while (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
-      print(map[_getKey(date)]);
       date = date.subtract(Duration(days: 1));
       count++;
     }
 
     return count;
+  }
+
+  int get30DayTotat([DateTime endingDate]) {
+    if (endingDate == null) endingDate = DateTime.now();
+    int total = 0;
+    int i = 0;
+    while (i < 30) {
+      String key = _getKey(endingDate);
+      if (map.containsKey(key) && map[key]) total++;
+      endingDate = endingDate.subtract(Duration(days: 1));
+      i++;
+    }
+    return total;
   }
 
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);
@@ -60,7 +72,6 @@ class HabitModel extends Model {
     final file = await _getStorageFile();
     if (await file.exists()) {
       final String contents = await file.readAsString();
-      print(json.decode(contents)["habits"]);
       final habits = (json.decode(contents)["habits"] as List)
           .map((h) => Habit.fromJson(h))
           .toList();

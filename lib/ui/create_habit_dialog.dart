@@ -37,7 +37,7 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
       ),
       actions: <Widget>[
         FlatButton(
-          textColor: Colors.black87,
+          textColor: Theme.of(context).textTheme.body1.color,
           child: Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();

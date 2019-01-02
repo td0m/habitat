@@ -25,6 +25,7 @@ dependencies:
   json_serializable: ^2.0.1
   build_runner:
   date_format:
+  flutter_circular_chart:
 
 dev_dependencies:
   flutter_test:
