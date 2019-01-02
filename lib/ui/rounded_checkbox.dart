@@ -27,7 +27,7 @@ class RoundCheckbox extends StatelessWidget {
   Widget build(BuildContext context) {
     Color textColor = value
         ? Colors.white.withAlpha(0xdd)
-        : Theme.of(context).textTheme.body1.color.withAlpha(0x99);
+        : Theme.of(context).textTheme.body1.color.withAlpha(0x88);
     if (disabled || (placeholder == null && !value))
       textColor = Colors.transparent;
 
@@ -75,7 +75,7 @@ class RoundCheckbox extends StatelessWidget {
               : Text(
                   placeholder,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: textColor),
+                  style: TextStyle(color: textColor, fontSize: 14),
                 ),
         ),
       ),

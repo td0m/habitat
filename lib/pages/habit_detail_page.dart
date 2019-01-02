@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/ui/calendar.dart';
+import 'package:habitat/ui/confirm_dialog.dart';
+import 'package:habitat/ui/edit_habit_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 
@@ -14,6 +16,9 @@ class HabitDetailPage extends StatefulWidget {
 class _HabitDetailPageState extends State<HabitDetailPage> {
   final GlobalKey<AnimatedCircularChartState> _chartKey =
       new GlobalKey<AnimatedCircularChartState>();
+
+  HabitModel get habitModel =>
+      ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
 
   List<CircularStackEntry> _buildData(double percentageComplete) =>
       <CircularStackEntry>[
@@ -34,10 +39,42 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
         ),
       ];
 
+  void _openEditHabitDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => EditHabitDialog(index: widget.index),
+    );
+  }
+
+  _openCalendar() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            contentPadding: EdgeInsets.all(10),
+            content: Calendar(date: DateTime.now(), index: widget.index),
+          ),
+    );
+  }
+
+  _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmDialog(
+            title: "Delete Habit",
+            description:
+                "Are you sure you'd like to delete this habit? This action is irreversible.",
+            onConfirm: () async {
+              Navigator.of(context).pop();
+              await Future.delayed(Duration(milliseconds: 400));
+              habitModel.habits.removeAt(widget.index);
+              habitModel.habits = habitModel.habits;
+            },
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final habitModel =
-        ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
     final habit = habitModel.habits[widget.index];
 
     final thisMonth = habit.thisMonthTotal(DateTime.now());
@@ -57,9 +94,17 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: _openCalendar,
+            icon: Icon(Icons.today),
+          ),
+          IconButton(
+            onPressed: _openEditHabitDialog,
             icon: Icon(Icons.edit),
-          )
+          ),
+          IconButton(
+            onPressed: _confirmDelete,
+            icon: Icon(Icons.delete),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -69,16 +114,6 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  "This month",
-                  style: Theme.of(context).textTheme.title,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Calendar(date: DateTime.now(), index: widget.index),
-                  ],
-                ),
                 Text(
                   "Overview",
                   style: Theme.of(context).textTheme.title,

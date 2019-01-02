@@ -37,7 +37,6 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
       ),
       actions: <Widget>[
         FlatButton(
-          textColor: Theme.of(context).textTheme.body1.color,
           child: Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();
@@ -45,8 +44,8 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
         ),
         RaisedButton(
           color: Theme.of(context).primaryColor,
-          child:
-              Text("Create", style: Theme.of(context).primaryTextTheme.body1),
+          textColor: Theme.of(context).primaryTextTheme.body1.color,
+          child: Text("Create"),
           onPressed: _name == null || _name.length == 0 ? null : _createHabit,
         ),
       ],

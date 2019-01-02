@@ -11,8 +11,8 @@ part 'habit_model.g.dart';
 
 @JsonSerializable(nullable: false)
 class Habit {
-  final String title;
-  final Map<String, bool> map;
+  String title;
+  Map<String, bool> map;
   Habit(this.title, this.map);
 
   String _getKey(DateTime date) => formatDate(date, [yyyy, '/', mm, '/', dd]);
