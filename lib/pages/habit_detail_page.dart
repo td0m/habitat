@@ -77,10 +77,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Calendar(
-                      daysInMonth: 31,
-                      startingDay: DateTime.now().subtract(Duration(days: 1)),
-                    ),
+                    Calendar(date: DateTime.now().subtract(Duration(days: 31))),
                   ],
                 ),
                 Text(

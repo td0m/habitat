@@ -5,28 +5,43 @@ import 'package:habitat/utils/transpose.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Calendar extends StatefulWidget {
-  final DateTime startingDay;
-  final int daysInMonth;
-  Calendar({@required this.startingDay, @required this.daysInMonth});
+  final DateTime date;
+  Calendar({@required this.date});
 
   _CalendarState createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
+  DateTime startingDay = DateTime.now();
+  int daysInMonth = 1;
+
+  void initState() {
+    super.initState();
+    startingDay = widget.date;
+    while (startingDay.day != 1) {
+      startingDay = startingDay.subtract(Duration(days: 1));
+    }
+    var endDay = startingDay.add(Duration(days: 1));
+    while (endDay.add(Duration(days: daysInMonth)).day != 1) {
+      daysInMonth++;
+    }
+    daysInMonth++;
+  }
+
   static const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   bool _getValue(int i) {
     final habitModel =
         ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
     final habit = habitModel.habits.first;
-    return habit.getValue(widget.startingDay.add(Duration(days: i))) ?? false;
+    return habit.getValue(startingDay.add(Duration(days: i))) ?? false;
   }
 
   _onChange(int i) => (bool v) {
         final habitModel =
             ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
         final habits = habitModel.habits;
-        habits.first.setValue(widget.startingDay.add(Duration(days: i)), v);
+        habits.first.setValue(startingDay.add(Duration(days: i)), v);
         habitModel.habits = habits;
       };
 
@@ -53,12 +68,12 @@ class _CalendarState extends State<Calendar> {
     ];
     List<Widget> row = [];
     // prefil the start
-    while (wd < widget.startingDay.weekday - 1) {
+    while (wd < startingDay.weekday - 1) {
       row.add(RoundCheckbox(disabled: true));
       wd++;
     }
     // fill days
-    while (i <= widget.daysInMonth) {
+    while (i <= daysInMonth) {
       row.add(RoundCheckbox(
         placeholder: "$i",
         value: _getValue(i - 1),
