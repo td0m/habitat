@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/ui/rounded_checkbox.dart';
 
 class HabitListItem extends StatelessWidget {
   final String title;
+  final Habit habit;
   final void Function(int item, bool value) onChanged;
   HabitListItem({
     @required this.title,
     @required this.onChanged,
+    @required this.habit,
   });
 
   _onChanged(int index, bool value) {
@@ -14,6 +17,8 @@ class HabitListItem extends StatelessWidget {
   }
 
   Widget _generateCheckbox(int i) => RoundCheckbox(
+        value:
+            habit.getValue(DateTime.now().subtract(Duration(days: i))) ?? false,
         size: 22,
         onChanged: (v) => _onChanged(i, v),
       );
@@ -36,7 +41,7 @@ class HabitListItem extends StatelessWidget {
               children: <Widget>[
                 Text(title, style: TextStyle(fontSize: 16)),
                 Row(
-                  children: List.generate(5, _generateCheckbox),
+                  children: List.generate(6, _generateCheckbox),
                 )
               ],
             ),

@@ -33,7 +33,9 @@ class RoundCheckbox extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           splashColor: Theme.of(context).accentColor,
-          onTap: disabled ? null : _toggle,
+          onTap: disabled ? null : () {},
+          onLongPress: disabled ? null : _toggle,
+          onDoubleTap: disabled ? null : _toggle,
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),

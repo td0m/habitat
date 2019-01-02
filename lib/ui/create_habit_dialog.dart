@@ -11,9 +11,7 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
 
   void _createHabit() {
     final habitModel = ScopedModel.of<HabitModel>(context);
-    habitModel.habits.add(Habit(_name));
-    habitModel.notifyListeners();
-
+    habitModel.habits = habitModel.habits..add(Habit(_name, {}));
     Navigator.of(context).pop();
   }
 
