@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/models/preferences.dart';
+import 'package:habitat/ui/confirm_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -10,6 +11,18 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   Preferences get prefs =>
       ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+
+  _confirmResetData() async {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmDialog(
+            title: "Reset Application Data",
+            description:
+                "Are you sure you'd like to reset all your app data? This action cannot be undone and will delete all your progress.",
+            onConfirm: _resetData(),
+          ),
+    );
+  }
 
   _resetData() {
     final habitModel = ScopedModel.of<HabitModel>(context);
@@ -47,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: BorderRadius.circular(5),
-                onTap: _resetData,
+                onTap: _confirmResetData,
                 child: Container(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   height: 50,

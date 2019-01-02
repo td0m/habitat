@@ -65,7 +65,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
                 "Are you sure you'd like to delete this habit? This action is irreversible.",
             onConfirm: () async {
               Navigator.of(context).pop();
-              await Future.delayed(Duration(milliseconds: 400));
+              await Future.delayed(Duration(milliseconds: 100));
               habitModel.habits.removeAt(widget.index);
               habitModel.habits = habitModel.habits;
             },

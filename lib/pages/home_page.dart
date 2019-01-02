@@ -5,6 +5,8 @@ import 'package:habitat/ui/create_habit_dialog.dart';
 import 'package:habitat/ui/habit_list_item.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'package:date_format/date_format.dart';
+
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
 
@@ -56,6 +58,13 @@ class _HomePageState extends State<HomePage>
     final habitModel =
         ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
 
+    final habitList = List.generate(habitModel.habits.length, (i) => i)
+        .map((index) => HabitListItem(
+              index: index,
+              onChanged: (i, v) => _onHabitValueChanged(index, i, v),
+              habit: habitModel.habits[index],
+            ));
+
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -65,13 +74,25 @@ class _HomePageState extends State<HomePage>
               padding: EdgeInsets.only(top: 5),
             ),
             Column(
-              children: List.generate(habitModel.habits.length, (i) => i)
-                  .map((index) => HabitListItem(
-                        index: index,
-                        onChanged: (i, v) => _onHabitValueChanged(index, i, v),
-                        habit: habitModel.habits[index],
-                      ))
-                  .toList(),
+              children: [
+                Container(
+                  margin: EdgeInsets.only(right: 23, top: 4, bottom: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: List.generate(6, (i) {
+                      DateTime day = DateTime.now().subtract(Duration(days: i));
+                      String weekday = dayShort[day.weekday - 1];
+                      return Container(
+                        width: 32,
+                        child: Text(
+                          "$weekday",
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }),
+                  ),
+                )
+              ]..addAll(habitList),
             )
           ],
         ),
@@ -90,17 +111,9 @@ class _HomePageState extends State<HomePage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.menu),
-                    onPressed: () {},
-                  ),
-                  Text(
-                    "Habitat",
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                ],
+              IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {},
               ),
               IconButton(
                 icon: Icon(Icons.settings),
