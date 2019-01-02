@@ -20,6 +20,7 @@ class Habit {
   setValue(DateTime day, bool value) {
     String key = _getKey(day);
     map[key] = value;
+    if (!value) map.remove(key);
   }
 
   bool getValue(DateTime day) {

@@ -27,8 +27,8 @@ class ConfirmDialog extends StatelessWidget {
             color: Theme.of(context).primaryColor,
             textColor: Theme.of(context).primaryTextTheme.body1.color,
             onPressed: () {
-              Navigator.of(context).pop();
               onConfirm();
+              Navigator.of(context).pop();
             },
             child: Text("Ok"),
           )

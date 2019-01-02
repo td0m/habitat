@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: "Reset Application Data",
             description:
                 "Are you sure you'd like to reset all your app data? This action cannot be undone and will delete all your progress.",
-            onConfirm: _resetData(),
+            onConfirm: _resetData,
           ),
     );
   }
