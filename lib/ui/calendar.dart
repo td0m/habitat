@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/ui/rounded_checkbox.dart';
+import 'package:habitat/utils/get_month_start.dart';
 import 'package:habitat/utils/transpose.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Calendar extends StatefulWidget {
   final DateTime date;
-  Calendar({@required this.date});
+  final int index;
+  Calendar({@required this.date, @required this.index});
 
   _CalendarState createState() => _CalendarState();
 }
@@ -17,10 +19,7 @@ class _CalendarState extends State<Calendar> {
 
   void initState() {
     super.initState();
-    startingDay = widget.date;
-    while (startingDay.day != 1) {
-      startingDay = startingDay.subtract(Duration(days: 1));
-    }
+    startingDay = getMonthStart(widget.date);
     var endDay = startingDay.add(Duration(days: 1));
     while (endDay.add(Duration(days: daysInMonth)).day != 1) {
       daysInMonth++;
@@ -30,18 +29,20 @@ class _CalendarState extends State<Calendar> {
 
   static const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+  DateTime selectedDay(int i) => startingDay.add(Duration(days: i));
+
   bool _getValue(int i) {
     final habitModel =
         ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
-    final habit = habitModel.habits.first;
-    return habit.getValue(startingDay.add(Duration(days: i))) ?? false;
+    final habit = habitModel.habits[widget.index];
+    return habit.getValue(selectedDay(i)) ?? false;
   }
 
   _onChange(int i) => (bool v) {
         final habitModel =
             ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
         final habits = habitModel.habits;
-        habits.first.setValue(startingDay.add(Duration(days: i)), v);
+        habits[widget.index].setValue(selectedDay(i), v);
         habitModel.habits = habits;
       };
 
@@ -56,7 +57,11 @@ class _CalendarState extends State<Calendar> {
                   child: Text(
                     w,
                     style: TextStyle(
-                      color: Colors.black38,
+                      color: Theme.of(context)
+                          .textTheme
+                          .body1
+                          .color
+                          .withAlpha(0x55),
                       fontSize: 12,
                     ),
                     textAlign: TextAlign.center,
@@ -78,6 +83,7 @@ class _CalendarState extends State<Calendar> {
         placeholder: "$i",
         value: _getValue(i - 1),
         onChanged: _onChange(i - 1),
+        selected: selectedDay(i - 1).day == DateTime.now().day,
       ));
       i++;
       if (wd == 6) {

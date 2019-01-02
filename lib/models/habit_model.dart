@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:habitat/utils/get_month_start.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +25,7 @@ class Habit {
   bool getValue(DateTime day) {
     String key = _getKey(day);
     if (map.containsKey(key)) return map[key];
-    return null;
+    return false;
   }
 
   int get streak {
@@ -49,6 +50,18 @@ class Habit {
       i++;
     }
     return total;
+  }
+
+  int thisMonthTotal(DateTime date) {
+    int total = 0;
+    int done = 0;
+    DateTime start = getMonthStart(date);
+    while (start.day <= date.day) {
+      if (getValue(start)) done++;
+      total++;
+      start = start.add(Duration(days: 1));
+    }
+    return (done / total * 100).round();
   }
 
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);

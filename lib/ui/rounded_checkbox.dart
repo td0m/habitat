@@ -4,6 +4,7 @@ class RoundCheckbox extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   final bool disabled;
+  final bool selected;
   final String placeholder;
   final double size;
   RoundCheckbox(
@@ -11,10 +12,12 @@ class RoundCheckbox extends StatelessWidget {
       this.onChanged,
       disabled = false,
       this.placeholder,
+      bool selected,
       double size})
       : this.disabled = disabled,
         this.value = value ?? false,
-        this.size = size ?? 28;
+        this.size = size ?? 28,
+        this.selected = selected ?? false;
 
   _toggle() {
     if (onChanged != null) onChanged(!value);
@@ -22,8 +25,9 @@ class RoundCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor =
-        value ? Colors.white.withAlpha(0xdd) : Colors.black.withAlpha(0x88);
+    Color textColor = value
+        ? Colors.white.withAlpha(0xdd)
+        : Theme.of(context).textTheme.body1.color.withAlpha(0x99);
     if (disabled || (placeholder == null && !value))
       textColor = Colors.transparent;
 
@@ -41,11 +45,21 @@ class RoundCheckbox extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: value && placeholder != null ? color : Colors.transparent,
+            color: value && placeholder != null
+                ? color
+                : (selected
+                    ? Theme.of(context).textTheme.body1.color.withAlpha(0x11)
+                    : Colors.transparent),
             border: Border.all(
-                color: (value)
-                    ? color
-                    : Theme.of(context).textTheme.body1.color.withAlpha(0x44),
+                color: disabled
+                    ? Colors.transparent
+                    : (value
+                        ? color
+                        : Theme.of(context)
+                            .textTheme
+                            .body1
+                            .color
+                            .withAlpha(0x44)),
                 width: 2),
           ),
           child: placeholder == null

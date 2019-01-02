@@ -12,6 +12,9 @@ class HabitDetailPage extends StatefulWidget {
 }
 
 class _HabitDetailPageState extends State<HabitDetailPage> {
+  final GlobalKey<AnimatedCircularChartState> _chartKey =
+      new GlobalKey<AnimatedCircularChartState>();
+
   List<CircularStackEntry> _buildData(double percentageComplete) =>
       <CircularStackEntry>[
         CircularStackEntry(
@@ -37,13 +40,9 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
         ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
     final habit = habitModel.habits[widget.index];
 
-    final past30Days = (habit.get30DayTotat().toDouble() / 30 * 100).round();
-    final previous30Days =
-        (habit.get30DayTotat(DateTime.now().subtract(Duration(days: 30))) /
-                30 *
-                100)
-            .round();
-    final change = past30Days - previous30Days;
+    final thisMonth = habit.thisMonthTotal(DateTime.now());
+    if (_chartKey.currentState != null)
+      _chartKey.currentState.updateData(_buildData(thisMonth.toDouble()));
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +76,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Calendar(date: DateTime.now().subtract(Duration(days: 31))),
+                    Calendar(date: DateTime.now(), index: widget.index),
                   ],
                 ),
                 Text(
@@ -89,33 +88,23 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("This month",
+                              style: Theme.of(context).textTheme.subhead),
+                          Text("$thisMonth%"),
+                        ],
+                      ),
                       AnimatedCircularChart(
+                        key: _chartKey,
                         holeRadius: 10,
                         edgeStyle: SegmentEdgeStyle.round,
                         size: Size(50, 50),
-                        initialChartData: _buildData(past30Days.toDouble()),
+                        initialChartData: _buildData(thisMonth.toDouble()),
                         chartType: CircularChartType.Radial,
                         percentageValues: true,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text("Past 30 days",
-                              style: Theme.of(context).textTheme.subhead),
-                          Text("$past30Days%"),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Change",
-                            style: Theme.of(context).textTheme.subhead,
-                          ),
-                          Text("$change%"),
-                        ],
                       ),
                     ],
                   ),
