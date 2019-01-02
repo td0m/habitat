@@ -33,6 +33,8 @@ class RoundCheckbox extends StatelessWidget {
 
     final color = Theme.of(context).accentColor;
 
+    final grey = Theme.of(context).textTheme.body1.color.withAlpha(0x44);
+
     return Container(
       margin: EdgeInsets.all(4),
       child: GestureDetector(
@@ -47,19 +49,9 @@ class RoundCheckbox extends StatelessWidget {
             shape: BoxShape.circle,
             color: value && placeholder != null
                 ? color
-                : (selected
-                    ? Theme.of(context).textTheme.body1.color.withAlpha(0x11)
-                    : Colors.transparent),
+                : (selected && placeholder != null ? grey : Colors.transparent),
             border: Border.all(
-                color: disabled
-                    ? Colors.transparent
-                    : (value
-                        ? color
-                        : Theme.of(context)
-                            .textTheme
-                            .body1
-                            .color
-                            .withAlpha(0x44)),
+                color: disabled ? Colors.transparent : (value ? color : grey),
                 width: 2),
           ),
           child: placeholder == null
@@ -67,7 +59,8 @@ class RoundCheckbox extends StatelessWidget {
                   duration: Duration(milliseconds: 160),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: value ? color : Colors.transparent,
+                    color:
+                        value ? color : (selected ? grey : Colors.transparent),
                   ),
                   width: size * 0.55,
                   height: size * 0.55,

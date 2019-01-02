@@ -65,6 +65,20 @@ class _HomePageState extends State<HomePage>
               habit: habitModel.habits[index],
             ));
 
+    final labels = List.generate(6, (i) {
+      DateTime day = DateTime.now().subtract(Duration(days: i));
+      String weekday = dayShort[day.weekday - 1];
+      return Container(
+        width: 32,
+        child: Text(
+          "$weekday",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Theme.of(context).textTheme.body1.color.withAlpha(0x77)),
+        ),
+      );
+    });
+
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -79,17 +93,7 @@ class _HomePageState extends State<HomePage>
                   margin: EdgeInsets.only(right: 23, top: 4, bottom: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: List.generate(6, (i) {
-                      DateTime day = DateTime.now().subtract(Duration(days: i));
-                      String weekday = dayShort[day.weekday - 1];
-                      return Container(
-                        width: 32,
-                        child: Text(
-                          "$weekday",
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    }),
+                    children: labels,
                   ),
                 )
               ]..addAll(habitList),

@@ -27,6 +27,7 @@ class _HabitListItemState extends State<HabitListItem> {
                 false,
         size: 24,
         onChanged: (v) => _onChanged(i, v),
+        selected: i == 0,
       );
 
   _handleTap() {
