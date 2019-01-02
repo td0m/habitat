@@ -24,10 +24,12 @@ class _AppState extends State<App> {
 
   _theme() {
     final dark = _prefs.darkMode;
+    final amoled = _prefs.amoledDark;
     return ThemeData(
       primaryColor: Color(0xff1a73e8),
       accentColor: Color(0xff1a73e8),
-      canvasColor: dark ? Color(0xFF202230) : Colors.grey[50],
+      canvasColor:
+          dark ? (amoled ? Colors.black : Color(0xFF202230)) : Colors.grey[50],
       cardColor: dark ? Colors.black : Colors.white,
       brightness: dark ? Brightness.dark : Brightness.light,
     );

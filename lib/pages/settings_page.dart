@@ -55,85 +55,114 @@ class _SettingsPageState extends State<SettingsPage> {
               'Settings',
               style: themeData.textTheme.headline,
             ),
+            Padding(
+              padding: EdgeInsets.only(top: 15),
+            ),
+            SettingsSection("Account"),
+            Setting(
+              title: "Reset Data",
+              description: "Includes all your habits and settings.",
+              onTap: _confirmResetData,
+            ),
             Divider(),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(5),
-                onTap: _confirmResetData,
-                child: Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  height: 50,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Reset Data",
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            "Includes all your habits and settings.",
-                            style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .body1
-                                  .color
-                                  .withAlpha(0xaa),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+            SettingsSection("Display"),
+            Setting(
+              title: "Theme",
+              description: prefs.darkMode ? "Dark Theme" : "Light Theme",
+              onTap: () => prefs.darkMode = !prefs.darkMode,
+              trailing: Switch(
+                value: prefs.darkMode,
+                onChanged: (val) => prefs.darkMode = val,
               ),
             ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(5),
-                onTap: () => prefs.darkMode = !prefs.darkMode,
-                child: Container(
-                  padding: EdgeInsets.only(left: 10, right: 10),
-                  height: 50,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text("Theme",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                )),
-                            Text(
-                              prefs.darkMode ? "Dark Theme" : "Light Theme",
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Switch(
-                        value: prefs.darkMode,
-                        onChanged: (val) => prefs.darkMode = val,
-                      )
-                    ],
-                  ),
-                ),
+            Setting(
+              title: "Pure Blacks",
+              description:
+                  "Use pure black in dark mode. Saves battery on AMOLED displays.",
+              onTap: () => prefs.amoledDark = !prefs.amoledDark,
+              trailing: Switch(
+                value: prefs.amoledDark,
+                onChanged: (val) => prefs.amoledDark = val,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class Setting extends StatelessWidget {
+  final VoidCallback onTap;
+  final String title;
+  final String description;
+  final Widget trailing;
+  Setting({
+    @required this.onTap,
+    @required this.title,
+    @required this.description,
+    Widget trailing,
+  }) : this.trailing = trailing ?? Text("");
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(5),
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        color: Theme.of(context)
+                            .textTheme
+                            .body1
+                            .color
+                            .withAlpha(0xaa),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              trailing
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsSection extends StatelessWidget {
+  final String text;
+  SettingsSection(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 3, top: 10),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.body2.copyWith(
+              color: Theme.of(context).primaryColor,
+            ),
       ),
     );
   }
