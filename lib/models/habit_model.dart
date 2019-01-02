@@ -27,6 +27,18 @@ class Habit {
     return null;
   }
 
+  int get streak {
+    int count = 0;
+    DateTime date = DateTime.now();
+    while (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
+      print(map[_getKey(date)]);
+      date = date.subtract(Duration(days: 1));
+      count++;
+    }
+
+    return count;
+  }
+
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);
   Map<String, dynamic> toJson() => _$HabitToJson(this);
 }
@@ -61,11 +73,6 @@ class HabitModel extends Model {
     await file.writeAsString(jsonEncode({
       "habits": habits.map((h) => h.toJson()).toList(),
     }));
-  }
-
-  Future<void> _clear() async {
-    habits = [];
-    _updateLocal();
   }
 
   List<Habit> get habits => _habits;

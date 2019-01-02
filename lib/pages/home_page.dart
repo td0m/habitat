@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage>
             Column(
               children: List.generate(habitModel.habits.length, (i) => i)
                   .map((index) => HabitListItem(
-                        title: habitModel.habits[index].title,
+                        index: index,
                         onChanged: (i, v) => _onHabitValueChanged(index, i, v),
                         habit: habitModel.habits[index],
                       ))
