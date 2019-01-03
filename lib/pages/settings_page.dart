@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/models/preferences.dart';
 import 'package:habitat/ui/confirm_dialog.dart';
+import 'package:habitat/ui/settings.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as path;
 
 class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
@@ -11,6 +17,9 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   Preferences get prefs =>
       ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+
+  HabitModel get habitModel =>
+      ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
 
   _confirmResetData() async {
     showDialog(
@@ -25,8 +34,38 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _resetData() {
-    final habitModel = ScopedModel.of<HabitModel>(context);
     habitModel.habits = [];
+  }
+
+  _importData() async {
+    String filePath = await FilePicker.getFilePath(
+      type: FileType.ANY,
+    );
+    if (filePath == null) {
+    } else if (path.extension(filePath) == ".json") {
+      habitModel.importJson(filePath);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => ConfirmDialog(
+              title: "Invalid extension",
+              description:
+                  "JSON file required, instead given ${path.extension(filePath)}",
+              onConfirm: () {},
+            ),
+      );
+    }
+  }
+
+  _exportData() async {
+    String filePath = await FilePicker.getFilePath(
+      type: FileType.ANY,
+    );
+    if (path.extension(filePath) != ".json") {
+      filePath = path.join(path.dirname(filePath), "habitat.exported.json");
+      await File(filePath).create();
+    }
+    await File(filePath).writeAsString(await habitModel.getData());
   }
 
   @override
@@ -64,15 +103,32 @@ class _SettingsPageState extends State<SettingsPage> {
               description: "Includes all your habits and settings.",
               onTap: _confirmResetData,
             ),
+            Setting(
+              title: "Import Data",
+              description: "Import data from a json file.",
+              onTap: _importData,
+            ),
+            Setting(
+              title: "Export Data",
+              description: "Export data to a json file.",
+              onTap: _exportData,
+            ),
             Divider(),
             SettingsSection("Display"),
             Setting(
               title: "Theme",
-              description: prefs.darkMode ? "Dark Theme" : "Light Theme",
-              onTap: () => prefs.darkMode = !prefs.darkMode,
-              trailing: Switch(
-                value: prefs.darkMode,
-                onChanged: (val) => prefs.darkMode = val,
+              description: prefs.theme + " Theme",
+              trailing: PopupMenuButton<String>(
+                initialValue: prefs.theme,
+                icon: Icon(Icons.arrow_drop_down),
+                onSelected: (theme) => prefs.theme = theme,
+                itemBuilder: (BuildContext context) =>
+                    ["Light", "Dark", "Adaptive"]
+                        .map((theme) => PopupMenuItem<String>(
+                              value: theme,
+                              child: Text(theme),
+                            ))
+                        .toList(),
               ),
             ),
             Setting(
@@ -81,88 +137,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   "Use pure black in dark mode. Saves battery on AMOLED displays.",
               onTap: () => prefs.amoledDark = !prefs.amoledDark,
               trailing: Switch(
+                activeColor: themeData.primaryColor,
                 value: prefs.amoledDark,
                 onChanged: (val) => prefs.amoledDark = val,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class Setting extends StatelessWidget {
-  final VoidCallback onTap;
-  final String title;
-  final String description;
-  final Widget trailing;
-  Setting({
-    @required this.onTap,
-    @required this.title,
-    @required this.description,
-    Widget trailing,
-  }) : this.trailing = trailing ?? Text("");
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(5),
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .textTheme
-                            .body1
-                            .color
-                            .withAlpha(0xaa),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              trailing
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsSection extends StatelessWidget {
-  final String text;
-  SettingsSection(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 3, top: 10),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.body2.copyWith(
-              color: Theme.of(context).primaryColor,
-            ),
       ),
     );
   }

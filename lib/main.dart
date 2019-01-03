@@ -23,8 +23,12 @@ class _AppState extends State<App> {
       ScopedModel.of<Preferences>(context, rebuildOnChange: true);
 
   _theme() {
-    final dark = _prefs.darkMode;
+    final now = DateTime.now();
+    final isDarkOutside = now.hour > 21 || now.hour < 7;
+    final dark =
+        _prefs.theme == "Dark" || _prefs.theme == "Adaptive" && isDarkOutside;
     final amoled = _prefs.amoledDark;
+
     return ThemeData(
       primaryColor: Color(0xff1a73e8),
       accentColor: Color(0xff1a73e8),

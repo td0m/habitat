@@ -32,6 +32,10 @@ class Habit {
   int get streak {
     int count = 0;
     DateTime date = DateTime.now();
+    if (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
+      count++;
+    }
+    date = date.subtract(Duration(days: 1));
     while (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
       date = date.subtract(Duration(days: 1));
       count++;
@@ -98,6 +102,21 @@ class HabitModel extends Model {
     await file.writeAsString(jsonEncode({
       "habits": habits.map((h) => h.toJson()).toList(),
     }));
+  }
+
+  importJson(String path) async {
+    final local = await _getStorageFile();
+    final newContent = await File(path).readAsString();
+    await local.writeAsString(newContent);
+    await _fetchLocal();
+  }
+
+  Future<String> getData() async {
+    final file = await _getStorageFile();
+    if (await file.exists()) {
+      return await file.readAsString();
+    }
+    return "";
   }
 
   List<Habit> get habits => _habits;
