@@ -119,7 +119,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Overview ${habit.repeat} ${habit.period}",
+                  "Overview",
                   style: Theme.of(context).textTheme.title,
                 ),
                 Container(
