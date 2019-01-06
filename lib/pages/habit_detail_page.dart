@@ -92,7 +92,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(habit.title),
-            Text("${habit.streak}🔥",
+            Text("${habit.streak}🔥${habit.expiresToday ? "⌛" : ""}",
                 style: Theme.of(context).primaryTextTheme.body1),
           ],
         ),

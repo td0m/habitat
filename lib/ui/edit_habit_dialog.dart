@@ -11,12 +11,32 @@ class EditHabitDialog extends StatefulWidget {
 
 class _EditHabitDialogState extends State<EditHabitDialog> {
   TextEditingController _titleController = TextEditingController();
+  TextEditingController _repeatController = TextEditingController();
+  TextEditingController _periodController = TextEditingController();
 
   HabitModel get habitModel =>
       ScopedModel.of<HabitModel>(context, rebuildOnChange: true);
 
+  void initState() {
+    super.initState();
+    final habit = ScopedModel.of<HabitModel>(context).habits[widget.index];
+    _titleController.text = habit.title;
+    _repeatController.text = habit.repeat.toString();
+    _periodController.text = habit.period.toString();
+  }
+
   _saveChanges() {
+    int repeat = int.parse(_repeatController.text);
+    int period = int.parse(_periodController.text);
+    if (repeat > period) repeat = period;
+    if (repeat == period) {
+      repeat = 1;
+      period = 1;
+    }
+
     habitModel.habits[widget.index].title = _titleController.text;
+    habitModel.habits[widget.index].repeat = repeat;
+    habitModel.habits[widget.index].period = period;
     habitModel.habits = habitModel.habits;
 
     Navigator.of(context).pop();
@@ -33,6 +53,32 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
             decoration: InputDecoration(labelText: "Name"),
             controller: _titleController,
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 20),
+          ),
+          Row(
+            children: <Widget>[
+              Text("Repeat"),
+              Container(
+                width: 40,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _repeatController,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text("times in"),
+              Container(
+                width: 40,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _periodController,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text("days."),
+            ],
+          )
         ],
       ),
       actions: <Widget>[

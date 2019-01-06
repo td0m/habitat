@@ -63,7 +63,7 @@ class _HabitListItemState extends State<HabitListItem> {
                             .copyWith(fontSize: 17)),
                     widget.habit.streak >= 3
                         ? Text(
-                            "${widget.habit.streak}🔥",
+                            "${widget.habit.streak}🔥${widget.habit.expiresToday ? "⌛" : ""}",
                             style: Theme.of(context).textTheme.body1,
                           )
                         : Container(),

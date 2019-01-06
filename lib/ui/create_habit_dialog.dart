@@ -32,6 +32,10 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
       repeat = int.parse(_repeatController.text);
       period = int.parse(_periodController.text);
       if (repeat > period) repeat = period;
+      if (repeat == period) {
+        repeat = 1;
+        period = 1;
+      }
     }
 
     final habit = Habit(

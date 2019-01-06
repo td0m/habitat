@@ -56,6 +56,16 @@ class Habit {
     return (i - repeat);
   }
 
+  bool get expiresToday {
+    DateTime date = DateTime.now();
+    int i = 0;
+    while (!getValue(date)) {
+      date = date.subtract(Duration(days: 1));
+      i++;
+    }
+    return i + repeat - 1 == period;
+  }
+
   int thisMonthTotal(DateTime date) {
     int total = 0;
     int done = 0;
