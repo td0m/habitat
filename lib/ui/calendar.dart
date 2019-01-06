@@ -5,6 +5,8 @@ import 'package:habitat/utils/get_month_start.dart';
 import 'package:habitat/utils/transpose.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
 class Calendar extends StatefulWidget {
   final DateTime date;
   final int index;
@@ -26,8 +28,6 @@ class _CalendarState extends State<Calendar> {
     }
     daysInMonth++;
   }
-
-  static const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   DateTime selectedDay(int i) => startingDay.add(Duration(days: i));
 

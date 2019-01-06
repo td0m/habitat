@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/pages/settings_page.dart';
+import 'package:habitat/ui/calendar.dart';
 import 'package:habitat/ui/create_habit_dialog.dart';
 import 'package:habitat/ui/habit_list_item.dart';
 import 'package:scoped_model/scoped_model.dart';
-
-import 'package:date_format/date_format.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -67,7 +66,7 @@ class _HomePageState extends State<HomePage>
 
     final labels = List.generate(6, (i) {
       DateTime day = DateTime.now().subtract(Duration(days: i));
-      String weekday = dayShort[day.weekday - 1];
+      String weekday = weekdays[day.weekday - 1];
       return Container(
         width: 32,
         child: Text(

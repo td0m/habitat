@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
+import 'package:habitat/ui/repeat_input.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class CreateHabitDialog extends StatefulWidget {
@@ -11,6 +12,7 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
   String _repeat = "Every Day";
   TextEditingController _repeatController;
   TextEditingController _periodController;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -45,8 +47,6 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
       period,
     );
 
-    print(habit);
-
     habitModel.habits = habitModel.habits..add(habit);
 
     Navigator.of(context).pop();
@@ -58,91 +58,65 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
     });
   }
 
-  String _repeatValidator(String s) {
-    print(s);
-    if (s == null) return null;
-    final i = int.parse(s);
-    if (i > int.parse(_periodController.text)) {
-      return "Repeat cannot be larger than the period";
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text("Create habit"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextField(
-            decoration: InputDecoration(labelText: "Name"),
-            onChanged: _handleNameChange,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10),
-          ),
-          InputDecorator(
-            decoration: InputDecoration(
-              labelText: "Repeat",
-              contentPadding: EdgeInsets.zero,
+      content: Form(
+        key: _formKey,
+        autovalidate: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: "Name"),
+              onChanged: _handleNameChange,
             ),
-            baseStyle: TextStyle(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  _repeat,
-                  style: TextStyle(),
-                ),
-                PopupMenuButton<String>(
-                  initialValue: _repeat,
-                  icon: Icon(Icons.arrow_drop_down),
-                  onSelected: (value) => setState(() {
-                        _repeat = value;
-                      }),
-                  itemBuilder: (BuildContext context) =>
-                      ["Every Day", "Every Week", "Custom"]
-                          .map((v) => PopupMenuItem<String>(
-                                value: v,
-                                child: Text(v),
-                              ))
-                          .toList(),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.only(top: 10),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 20),
-          ),
-          Row(
-            children: _repeat == "Custom"
-                ? <Widget>[
-                    Text("Repeat"),
-                    Container(
-                      width: 40,
-                      child: TextFormField(
-                        validator: _repeatValidator,
-                        keyboardType: TextInputType.number,
-                        controller: _repeatController,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Text("times in"),
-                    Container(
-                      width: 40,
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: _periodController,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Text("days."),
-                  ]
-                : [],
-          )
-        ],
+            InputDecorator(
+              decoration: InputDecoration(
+                labelText: "Repeat",
+                contentPadding: EdgeInsets.zero,
+              ),
+              baseStyle: TextStyle(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    _repeat,
+                    style: TextStyle(),
+                  ),
+                  PopupMenuButton<String>(
+                    initialValue: _repeat,
+                    icon: Icon(Icons.arrow_drop_down),
+                    onSelected: (value) => setState(() {
+                          _repeat = value;
+                        }),
+                    itemBuilder: (BuildContext context) =>
+                        ["Every Day", "Every Week", "Custom"]
+                            .map((v) => PopupMenuItem<String>(
+                                  value: v,
+                                  child: Text(v),
+                                ))
+                            .toList(),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+            ),
+            _repeat == "Custom"
+                ? RepeatInput(
+                    repeatController: _repeatController,
+                    periodController: _periodController,
+                  )
+                : Container(),
+          ],
+        ),
       ),
       actions: <Widget>[
         FlatButton(

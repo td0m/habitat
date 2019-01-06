@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
+import 'package:habitat/ui/repeat_input.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class EditHabitDialog extends StatefulWidget {
@@ -56,29 +57,10 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
           Padding(
             padding: EdgeInsets.only(top: 20),
           ),
-          Row(
-            children: <Widget>[
-              Text("Repeat"),
-              Container(
-                width: 40,
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _repeatController,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Text("times in"),
-              Container(
-                width: 40,
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _periodController,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Text("days."),
-            ],
-          )
+          RepeatInput(
+            repeatController: _repeatController,
+            periodController: _periodController,
+          ),
         ],
       ),
       actions: <Widget>[

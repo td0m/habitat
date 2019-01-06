@@ -10,8 +10,8 @@ Habit _$HabitFromJson(Map<String, dynamic> json) {
   return Habit(
       json['title'] as String,
       Map<String, bool>.from(json['map'] as Map),
-      json['period'] as int,
-      json['repeat'] as int);
+      json['repeat'] as int,
+      json['period'] as int);
 }
 
 Map<String, dynamic> _$HabitToJson(Habit instance) => <String, dynamic>{
