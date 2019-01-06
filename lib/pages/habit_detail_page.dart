@@ -39,6 +39,10 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
         ),
       ];
 
+  void initState() {
+    super.initState();
+  }
+
   void _openEditHabitDialog() {
     showDialog(
       context: context,
@@ -115,7 +119,7 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  "Overview",
+                  "Overview ${habit.repeat} ${habit.period}",
                   style: Theme.of(context).textTheme.title,
                 ),
                 Container(

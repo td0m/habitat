@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:habitat/utils/get_month_start.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -11,7 +12,9 @@ part 'habit_model.g.dart';
 
 @JsonSerializable(nullable: false)
 class Habit {
-  Habit(this.title, this.map, [this.period = 1, this.repeat = 1]);
+  Habit(this.title, this.map, [int repeat, int period])
+      : this.repeat = repeat ?? 1,
+        this.period = period ?? 1;
 
   String title;
   Map<String, bool> map;
@@ -33,31 +36,24 @@ class Habit {
   }
 
   int get streak {
-    int count = 0;
     DateTime date = DateTime.now();
-    if (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
-      count++;
-    }
-    date = date.subtract(Duration(days: 1));
-    while (map.containsKey(_getKey(date)) && map[_getKey(date)]) {
-      date = date.subtract(Duration(days: 1));
-      count++;
-    }
 
-    return count;
-  }
-
-  int get30DayTotat([DateTime endingDate]) {
-    if (endingDate == null) endingDate = DateTime.now();
-    int total = 0;
+    int h = period;
     int i = 0;
-    while (i < 30) {
-      String key = _getKey(endingDate);
-      if (map.containsKey(key) && map[key]) total++;
-      endingDate = endingDate.subtract(Duration(days: 1));
-      i++;
+    bool first = true;
+
+    while (h > (repeat - 1)) {
+      if (getValue(date) || first)
+        h = min(h + 1, period);
+      else
+        h--;
+
+      if (!first || getValue(date)) i++;
+      first = false;
+      date = date.subtract(Duration(days: 1));
     }
-    return total;
+
+    return (i - repeat);
   }
 
   int thisMonthTotal(DateTime date) {
@@ -69,7 +65,7 @@ class Habit {
       total++;
       start = start.add(Duration(days: 1));
     }
-    return (done / total * 100).round();
+    return min((done * (period / repeat) / total * 100).round(), 100);
   }
 
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);

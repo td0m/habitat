@@ -31,11 +31,14 @@ class _CreateHabitDialogState extends State<CreateHabitDialog> {
     } else if (_repeat == "Custom") {
       repeat = int.parse(_repeatController.text);
       period = int.parse(_periodController.text);
+      if (repeat > period) repeat = period;
     }
 
     final habit = Habit(
       _name,
       {},
+      repeat,
+      period,
     );
 
     print(habit);
