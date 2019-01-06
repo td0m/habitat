@@ -41,11 +41,13 @@ class Habit {
     int h = period;
     int i = 0;
     bool first = true;
+    int last = 0;
 
     while (h > (repeat - 1)) {
-      if (getValue(date) || first)
+      if (getValue(date) || first) {
+        last = i;
         h = min(h + 1, period);
-      else
+      } else
         h--;
 
       if (!first || getValue(date)) i++;
@@ -53,13 +55,13 @@ class Habit {
       date = date.subtract(Duration(days: 1));
     }
 
-    return (i - repeat);
+    return last + 1;
   }
 
   bool get expiresToday {
     DateTime date = DateTime.now();
     int i = 0;
-    while (!getValue(date)) {
+    while (!getValue(date) && i <= period) {
       date = date.subtract(Duration(days: 1));
       i++;
     }
