@@ -28,6 +28,7 @@ dependencies:
   flutter_circular_chart:
   file_picker:
   path:
+  flutter_local_notifications:
 
 dev_dependencies:
   flutter_test:

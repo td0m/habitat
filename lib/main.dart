@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/models/preferences.dart';
 import 'package:habitat/pages/home_page.dart';
@@ -19,8 +20,43 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  FlutterLocalNotificationsPlugin notifications;
+
   Preferences get _prefs =>
       ScopedModel.of<Preferences>(context, rebuildOnChange: true);
+
+  HabitModel get _habits => ScopedModel.of<HabitModel>(context);
+
+  void initState() {
+    super.initState();
+    final initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final initializationSettingsIOS = IOSInitializationSettings();
+    final initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    notifications = FlutterLocalNotificationsPlugin();
+    notifications.initialize(initializationSettings);
+
+    _scheduleNotifications();
+  }
+
+  _scheduleNotifications() async {
+    notifications.cancelAll();
+    final habits = _habits.habits;
+    for (int i = 0; i < habits.length; i++) {
+      final time = Time(20, 9 + i, 0);
+      final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'repeatDailyAtTime channel id',
+        'repeatDailyAtTime channel name',
+        'repeatDailyAtTime description',
+      );
+      final iOSPlatformChannelSpecifics = IOSNotificationDetails();
+      final platformChannelSpecifics = NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      await notifications.showDailyAtTime(
+          i, habits[i].title, '', time, platformChannelSpecifics);
+    }
+  }
 
   _theme() {
     final now = DateTime.now();
@@ -41,6 +77,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    _scheduleNotifications();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Habitat',
