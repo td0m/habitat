@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:habitat/models/habit_model.dart';
 import 'package:habitat/ui/calendar.dart';
 import 'package:habitat/ui/confirm_dialog.dart';
-import 'package:habitat/ui/edit_habit_dialog.dart';
+import 'package:habitat/ui/create_habit_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 
@@ -46,7 +46,14 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
   void _openEditHabitDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) => EditHabitDialog(index: widget.index),
+      builder: (BuildContext context) => CreateHabitDialog(
+            "Edit Habit",
+            (Habit habit) {
+              habitModel.habits[widget.index] = habit;
+              habitModel.habits = habitModel.habits;
+            },
+            habitModel.habits[widget.index],
+          ),
     );
   }
 

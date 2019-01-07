@@ -39,7 +39,15 @@ class _HomePageState extends State<HomePage>
   void _showDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) => CreateHabitDialog(),
+      builder: (BuildContext context) => CreateHabitDialog(
+            "Create Habit",
+            (Habit habit) {
+              final habitModel = ScopedModel.of<HabitModel>(context);
+              habitModel.habits = habitModel.habits..add(habit);
+              habitModel.habits = habitModel.habits;
+            },
+            Habit(),
+          ),
     );
   }
 

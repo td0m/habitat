@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:habitat/services/notification_scheduler.dart';
 import 'package:habitat/utils/get_month_start.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -12,14 +13,30 @@ part 'habit_model.g.dart';
 
 @JsonSerializable(nullable: false)
 class Habit {
-  Habit(this.title, this.map, [int repeat, int period])
-      : this.repeat = repeat ?? 1,
-        this.period = period ?? 1;
+  Habit([
+    String title,
+    Map<String, bool> map,
+    int repeat,
+    int period,
+    bool reminder,
+    int hour,
+    int minute,
+  ])  : this.title = title ?? "",
+        this.map = map ?? {},
+        this.repeat = repeat ?? 1,
+        this.period = period ?? 1,
+        this.reminder = reminder ?? false,
+        this.hour = hour ?? 0,
+        this.minute = minute ?? 0;
 
   String title;
   Map<String, bool> map;
   int period;
   int repeat;
+
+  bool reminder;
+  int hour;
+  int minute;
 
   String _getKey(DateTime date) => formatDate(date, [yyyy, '/', mm, '/', dd]);
 
@@ -135,5 +152,6 @@ class HabitModel extends Model {
     _habits = value;
     notifyListeners();
     _updateLocal();
+    NotificationScheduler.schedule(value);
   }
 }
